@@ -8,16 +8,15 @@ const DashboardWrapper = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="flex min-h-screen w-full bg-slate-50 text-gray-600">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-slate-50 text-gray-600">
       <Sidebar />
 
-      {/* Main Content */}
-      <main className="flex flex-1 flex-col md:pl-64">
-        {/* Navbar */}
+      <main className="flex min-h-screen flex-col md:ml-64">
         <Navbar />
 
-        <div className="p-6">{children}</div>
+        <div className="p-6">
+          {children}
+        </div>
       </main>
     </div>
   );
