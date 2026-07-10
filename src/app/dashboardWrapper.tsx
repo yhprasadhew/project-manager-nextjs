@@ -10,8 +10,10 @@ const DashboardWrapper = ({
   return (
     <div className="min-h-screen bg-slate-50 text-gray-600">
       <Sidebar />
-
-      <main className="flex min-h-screen flex-col md:ml-64">
+ 
+       {/* md:ml-64 key line for navbar */}'
+      <main className="flex min-h-screen flex-col md:ml-64">  
+ 
         <Navbar />
 
         <div className="p-6">

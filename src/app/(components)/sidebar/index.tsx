@@ -1,15 +1,20 @@
+
+"use client";
+
 import React from 'react'
+import { useState } from 'react';
 
 const Sidebar = () => {
-  return (
-    <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:flex md:w-64 md:flex-col bg-white border-r">
+    const [showProjects , setShowProjects] = useState(true);
+    const [showPriority , setShowPriority] = useState(true);
+
+
+    const sidebarClassNames = `fixed flex flex-col h-[100%] justify-between  shadow-xl transition-all duration-300 h-full z-40 dark:bg-black overflow-y-auto bg-white` 
+    
+    return (
+    <aside className={sidebarClassNames}>
       <div className="flex flex-col h-full p-4">
-        <div className="text-lg font-semibold mb-4">Project</div>
-        <nav className="flex-1">
-          <ul className="space-y-2">
-            <li className="text-sm text-gray-700">Dashboard</li>
-            <li className="text-sm text-gray-700">Projects</li>
-          </ul>
+       
         </nav>
       </div>
     </aside>
