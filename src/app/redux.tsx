@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
@@ -48,10 +50,17 @@ const persistConfig = {
   storage,
   whitelist: ["global"],
 };
+
 const rootReducer = combineReducers({
   global: globalReducer,
   [api.reducerPath]: api.reducer,
 });
+
+export type RootState = {
+  global: ReturnType<typeof globalReducer>;
+  [api.reducerPath]: ReturnType<typeof api.reducer>;
+};
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 /* REDUX STORE */
@@ -69,7 +78,6 @@ export const makeStore = () => {
 
 /* REDUX TYPES */
 export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -80,18 +88,15 @@ export default function StoreProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const storeRef = useRef<AppStore>();
+  const storeRef = useRef<AppStore | null>(null);
   if (!storeRef.current) {
     storeRef.current = makeStore();
     setupListeners(storeRef.current.dispatch);
   }
-  const persistor = persistStore(storeRef.current);
-
+  persistStore(storeRef.current);
   return (
     <Provider store={storeRef.current}>
-      <PersistGate loading={null} persistor={persistor}>
-        {children}
-      </PersistGate>
+      {children}
     </Provider>
   );
 }

@@ -1,141 +1,167 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "../../redux";
+import { toggleSidebar } from "@/state";
 import {
+  X,
   LayoutDashboard,
-  FolderKanban,
-  ChevronDown,
+  Briefcase,
   Settings,
-  Circle,
-  Boxes,
+  ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils"; // simple clsx/twMerge helper — swap for your own if unavailable
-
-const priorityStyles: Record<string, string> = {
-  High: "bg-red-500",
-  Medium: "bg-yellow-500",
-  Low: "bg-green-500",
-};
 
 const Sidebar = () => {
+  const dispatch = useAppDispatch();
+  const isSidebarCollapsed = useAppSelector(
+    (state) => state.global.isSidebarCollapsed
+  );
   const pathname = usePathname();
-  const [showProjects, setShowProjects] = useState(true);
-  const [showPriority, setShowPriority] = useState(true);
 
-  const isActive = (href: string) => pathname === href;
+  const sidebarClassNames = `fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out dark:border-stroke-dark dark:bg-dark-secondary ${
+    isSidebarCollapsed
+      ? "w-0 -translate-x-full opacity-0"
+      : "w-64 translate-x-0 opacity-100"
+  }`;
 
-  const navLinkClasses = (href: string) =>
-    cn(
-      "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-      isActive(href)
-        ? "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
-        : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
-    );
+  const navLinks = [
+    {
+      href: "/",
+      label: "Dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      href: "/projects",
+      label: "Projects",
+      icon: Briefcase,
+    },
+    {
+      href: "/settings",
+      label: "Settings",
+      icon: Settings,
+    },
+  ];
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-gray-200 bg-white shadow-sm transition-all duration-300 dark:border-gray-800 dark:bg-black">
-      <div className="flex h-full flex-col p-4">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="mb-8 flex items-center gap-2 px-2 text-2xl font-bold tracking-tight text-blue-600"
-        >
-          <Boxes size={26} className="shrink-0" strokeWidth={2.2} />
-          ProjectOne
-        </Link>
-
-        {/* Navigation */}
-        <nav className="flex flex-1 flex-col gap-1">
-          <Link href="/" className={navLinkClasses("/")}>
-            <LayoutDashboard size={18} />
-            Dashboard
-          </Link>
-
-          {/* Projects */}
-          <button
-            onClick={() => setShowProjects((prev) => !prev)}
-            aria-expanded={showProjects}
-            className="flex items-center justify-between rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
-          >
-            <span className="flex items-center gap-2">
-              <FolderKanban size={18} />
-              Projects
-            </span>
-            <ChevronDown
-              size={16}
-              className={cn(
-                "transition-transform duration-200",
-                showProjects && "rotate-180"
-              )}
-            />
-          </button>
-
-          {showProjects && (
-            <div className="ml-4 flex flex-col gap-0.5 border-l border-gray-200 pl-3 dark:border-gray-800">
-              <Link href="/projects" className={navLinkClasses("/projects")}>
-                All Projects
-              </Link>
-              <Link
-                href="/projects/create"
-                className={navLinkClasses("/projects/create")}
-              >
-                Create Project
-              </Link>
-            </div>
-          )}
-
-          {/* Priority */}
-          <button
-            onClick={() => setShowPriority((prev) => !prev)}
-            aria-expanded={showPriority}
-            className="flex items-center justify-between rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
-          >
-            <span className="flex items-center gap-2">
-              <Circle size={18} />
-              Priority
-            </span>
-            <ChevronDown
-              size={16}
-              className={cn(
-                "transition-transform duration-200",
-                showPriority && "rotate-180"
-              )}
-            />
-          </button>
-
-          {showPriority && (
-            <div className="ml-4 flex flex-col gap-0.5 border-l border-gray-200 pl-3 dark:border-gray-800">
-              {(["High", "Medium", "Low"] as const).map((level) => (
-                <Link
-                  key={level}
-                  href={`/priority/${level.toLowerCase()}`}
-                  className={navLinkClasses(`/priority/${level.toLowerCase()}`)}
+    <aside className={sidebarClassNames}>
+      <div className="flex h-full flex-col justify-between p-5">
+        <div>
+          {/* ===================== LOGO ===================== */}
+          <div className="mb-8 flex items-center justify-between">
+            <Link href="/" className="group flex items-center gap-3">
+              {/* Custom logo mark */}
+              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gray-900 shadow-md ring-1 ring-black/5 transition-transform duration-200 group-hover:scale-105 dark:bg-white">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <span
-                    className={cn(
-                      "h-2 w-2 rounded-full",
-                      priorityStyles[level]
-                    )}
+                  <rect
+                    x="3"
+                    y="3"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    className="fill-white dark:fill-gray-900"
                   />
-                  {level}
-                </Link>
-              ))}
-            </div>
-          )}
+                  <rect
+                    x="14"
+                    y="3"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    className="fill-white/40 dark:fill-gray-900/40"
+                  />
+                  <rect
+                    x="3"
+                    y="14"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    className="fill-white/40 dark:fill-gray-900/40"
+                  />
+                  <rect
+                    x="14"
+                    y="14"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    className="fill-white dark:fill-gray-900"
+                  />
+                </svg>
+              </div>
 
-          <Link href="/settings" className={navLinkClasses("/settings")}>
-            <Settings size={18} />
-            Settings
-          </Link>
-        </nav>
+              <div>
+                <h1 className="text-base font-semibold leading-tight tracking-tight text-gray-900 dark:text-white">
+                  TaskFlow
+                </h1>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  Project Manager
+                </p>
+              </div>
+            </Link>
 
-        {/* Footer */}
-        <div className="border-t border-gray-200 pt-4 dark:border-gray-800">
-          <p className="text-center text-xs text-gray-400 dark:text-gray-600">
-            © 2026 Project Manager
+            <button
+              onClick={() => dispatch(toggleSidebar())}
+              className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-dark-tertiary dark:hover:text-gray-200"
+              aria-label="Close Sidebar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* ===================== NAVIGATION ===================== */}
+          <p className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            Menu
           </p>
+
+          <nav className="space-y-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const isActive = pathname === link.href;
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`group relative flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-dark-tertiary dark:hover:text-white"
+                  }`}
+                >
+                  {isActive && (
+                    <span className="absolute -left-5 h-5 w-1 rounded-r-full bg-gray-900 dark:bg-white" />
+                  )}
+                  <Icon className="h-[18px] w-[18px] shrink-0" />
+                  <span className="flex-1">{link.label}</span>
+                  {isActive && (
+                    <ChevronRight className="h-4 w-4 opacity-70" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* ===================== FOOTER ===================== */}
+        <div className="border-t border-gray-200 pt-4 dark:border-stroke-dark">
+          <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white dark:bg-white dark:text-gray-900">
+              v1
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                TaskFlow
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                © 2026 · All rights reserved
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
