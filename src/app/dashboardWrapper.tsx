@@ -38,6 +38,7 @@ const DashboardLayout = ({
   );
 };
 
+//redux
 const DashboardWrapper = ({
   children,
 }: {
@@ -46,7 +47,7 @@ const DashboardWrapper = ({
   return (
     <StoreProvider>
       <DashboardLayout>{children}</DashboardLayout>
-    </StoreProvider>
+    </StoreProvider> //redux
   );
 };
 
