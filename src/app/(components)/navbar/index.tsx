@@ -1,13 +1,18 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, Search, Settings, Bell, Sun, Moon } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../redux';
-import { toggleDarkMode, toggleSidebar } from '@/state';
+import { toggleDarkMode, setIsSidebarCollapsed } from '@/state';
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-10 w-full bg-white border-b border-gray-200 dark:bg-dark-secondary dark:border-stroke-dark transition-colors duration-300">
@@ -16,8 +21,8 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           <button 
             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-dark-tertiary transition-colors"
-            onClick={() => dispatch(toggleSidebar())}
-            aria-label="Toggle Sidebar"
+            onClick={() => dispatch(setIsSidebarCollapsed(false))}
+            aria-label="Open Sidebar"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -39,7 +44,7 @@ const Navbar = () => {
             onClick={() => dispatch(toggleDarkMode())}
             aria-label="Toggle Dark Mode"
           >
-            {isDarkMode ? (
+            {isMounted && isDarkMode ? (
               <Sun className="h-5 w-5 text-gray-500 dark:text-gray-300" />
             ) : (
               <Moon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
